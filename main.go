@@ -1,44 +1,38 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
+	"html/template"
+	"im/ctrl"
 	"net/http"
 )
 
 func main() {
-	http.HandleFunc("/user/login", Login)
+	http.Handle("/asset/", http.FileServer(http.Dir(".")))
+	RegisterView()
+
+	http.HandleFunc("/user/login", ctrl.Login)
+	http.HandleFunc("/user/register", ctrl.Register)
 
 	http.ListenAndServe(":8080", nil)
 }
 
-// Login 登录
-func Login(w http.ResponseWriter, r *http.Request) {
+func RegisterView() {
 	var (
-		ok  bool
 		err error
+		tpl *template.Template
 	)
-
-	if err = r.ParseForm(); err != nil {
-		fmt.Println(err)
+	if tpl, err = template.ParseGlob("view/**/*"); err != nil {
+		panic(err)
 	}
-
-	mobile := r.PostForm.Get("mobile")
-	password := r.PostForm.Get("passwd")
-
-	if mobile == "19999999999" && password == "123456" {
-		ok = true
+	for _, v := range tpl.Templates() {
+		name := v.Name()
+		http.HandleFunc(name, func(writer http.ResponseWriter, request *http.Request) {
+			_ = tpl.ExecuteTemplate(writer, name, nil)
+		})
 	}
+}
 
-	if ok {
-		data := map[string]interface{}{
-			"id":    1,
-			"token": "test",
-		}
-		Resp(w, 0, data, "")
-	} else {
-		Resp(w, -1, nil, "密码错误")
-	}
+func Register(w http.ResponseWriter, r *http.Request) {
 
 }
 
@@ -46,23 +40,4 @@ type H struct {
 	Code int         `json:"code"`
 	Data interface{} `json:"data,omitempty"`
 	Msg  string      `json:"msg"`
-}
-
-// Resp 响应
-func Resp(w http.ResponseWriter, code int, data interface{}, msg string) {
-	var (
-		jsonStr []byte
-		err     error
-	)
-	h := &H{
-		Code: code,
-		Data: data,
-		Msg:  msg,
-	}
-	if jsonStr, err = json.Marshal(h); err != nil {
-		panic(err)
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-type", "application/json")
-	_, _ = w.Write(jsonStr)
 }
