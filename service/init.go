@@ -17,5 +17,5 @@ func init() {
 	}
 	Engine.ShowSQL(true)
 	Engine.SetMaxOpenConns(10)
-	Engine.Sync2(new(model.User))
+	Engine.Sync2(new(model.User), new(model.Community), new(model.Contact))
 }
