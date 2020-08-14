@@ -12,7 +12,7 @@ import (
 type UserService struct {
 }
 
-//注册函数
+// Register注册
 func (s *UserService) Register(mobile, plainpwd, nickname, avatar, sex string) (user model.User, err error) {
 	//检测手机号码是否存在,
 	tmp := model.User{}
@@ -45,7 +45,7 @@ func (s *UserService) Register(mobile, plainpwd, nickname, avatar, sex string) (
 	return tmp, err
 }
 
-//登录函数
+// Login 登录
 func (s *UserService) Login(mobile, plainpwd string) (user *model.User, err error) {
 	user = &model.User{}
 	Engine.Where("mobile = ?", mobile).Get(user)
@@ -59,4 +59,11 @@ func (s *UserService) Login(mobile, plainpwd string) (user *model.User, err erro
 	user.Token = util.MD5Encode(str)
 	Engine.ID(user.Id).Cols("token").Update(user)
 	return user, nil
+}
+
+// Find 查找用户
+func (s *UserService) Find(id int64) *model.User {
+	user := &model.User{}
+	_, _ = Engine.ID(id).Get(user)
+	return user
 }

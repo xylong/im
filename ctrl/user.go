@@ -9,12 +9,15 @@ import (
 	"net/http"
 )
 
+var (
+	userService service2.UserService
+)
+
 // Login 登录
 func Login(w http.ResponseWriter, r *http.Request) {
 	var (
-		service service2.UserService
-		user    *model.User
-		err     error
+		user *model.User
+		err  error
 	)
 
 	if err = r.ParseForm(); err != nil {
@@ -24,7 +27,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	mobile := r.PostForm.Get("mobile")
 	password := r.PostForm.Get("passwd")
 
-	if user, err = service.Login(mobile, password); err != nil {
+	if user, err = userService.Login(mobile, password); err != nil {
 		util.Fail(w, err.Error())
 	} else {
 		util.Success(w, user, "")
@@ -34,9 +37,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 // Register 注册
 func Register(w http.ResponseWriter, r *http.Request) {
 	var (
-		err     error
-		service service2.UserService
-		user    model.User
+		err  error
+		user model.User
 	)
 	if err = r.ParseForm(); err != nil {
 		fmt.Println(err)
@@ -47,7 +49,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	avatar := ""
 	sex := model.SEX_UNKNOW
 
-	if user, err = service.Register(mobile, plainpwd, nickname, avatar, sex); err != nil {
+	if user, err = userService.Register(mobile, plainpwd, nickname, avatar, sex); err != nil {
 		util.Fail(w, err.Error())
 	} else {
 		util.Success(w, user, "")

@@ -16,6 +16,7 @@ func main() {
 	http.HandleFunc("/contact/loadfriend", ctrl.LoadFriend)
 	http.HandleFunc("/contact/joincommunity", ctrl.JoinCommunity)
 	http.HandleFunc("/contact/addfriend", ctrl.Addfriend)
+	http.HandleFunc("/chat", ctrl.Chat)
 
 	http.ListenAndServe(":8080", nil)
 }
