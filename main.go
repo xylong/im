@@ -8,6 +8,7 @@ import (
 
 func main() {
 	http.Handle("/asset/", http.FileServer(http.Dir(".")))
+	http.Handle("/mnt/", http.FileServer(http.Dir(".")))
 	RegisterView()
 
 	http.HandleFunc("/user/login", ctrl.Login)
@@ -17,6 +18,7 @@ func main() {
 	http.HandleFunc("/contact/joincommunity", ctrl.JoinCommunity)
 	http.HandleFunc("/contact/addfriend", ctrl.Addfriend)
 	http.HandleFunc("/chat", ctrl.Chat)
+	http.HandleFunc("/attach/upload", ctrl.Upload)
 
 	http.ListenAndServe(":8080", nil)
 }
