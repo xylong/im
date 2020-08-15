@@ -126,3 +126,12 @@ func (c *ContactService) SearchFriend(userId int64) (users []model.User) {
 	_ = Engine.In("id", objIds).Find(&users)
 	return
 }
+
+func (c *ContactService) SearchComunityIds(userId int64) (ids []int64) {
+	conacts := make([]model.Contact, 0)
+	_ = Engine.Where("ownerid = ? and cate = ?", userId, model.CONCAT_CATE_COMUNITY).Find(&conacts)
+	for _, v := range conacts {
+		ids = append(ids, v.Dstobj)
+	}
+	return
+}

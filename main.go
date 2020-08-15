@@ -20,6 +20,8 @@ func main() {
 	http.HandleFunc("/chat", ctrl.Chat)
 	http.HandleFunc("/attach/upload", ctrl.Upload)
 
+	http.HandleFunc("/contact/createcommunity", ctrl.CreateCommunity)
+
 	http.ListenAndServe(":8080", nil)
 }
 

@@ -70,6 +70,10 @@ func Chat(w http.ResponseWriter, r *http.Request) {
 		DataQueue: make(chan []byte, 50),
 		GroupSets: set.New(set.ThreadSafe),
 	}
+	comIds := contactService.SearchComunityIds(userId)
+	for _, v := range comIds {
+		node.GroupSets.Add(v)
+	}
 	// user和node绑定
 	rwlocker.Lock()
 	clientMap[userId] = node
@@ -133,6 +137,11 @@ func dispatch(data []byte) {
 	case CMD_SINGLE_MSG:
 		sendMsg(msg.Dstid, data)
 	case CMD_ROOM_MSG:
+		for _, v := range clientMap {
+			if v.GroupSets.Has(msg.Dstid) {
+				v.DataQueue <- data
+			}
+		}
 	case CMD_HEART:
 
 	}
